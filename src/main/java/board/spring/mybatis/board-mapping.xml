@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+
+<select id="getallboard" resultType="board">
+select * from board
+</select>
+
+
+<select id="boardpaging" resultType="board" parameterType="int[]">
+select r, title, id, time
+from (
+	select ROWNUM r, title, id, time 
+	from(select * from board order by time desc)
+	)
+	where r between 
+		<foreach collection ="array" item="r" separator="and">
+		#{r}
+		</foreach>
+</select>
+
+<insert id="insertboard" parameterType="board">
+insert into board 
+(num, title, text, time, textpw, click, id) values
+((select max(num)+1 from board), #{title}, #{text}, sysdate, #{textpw},0,#{id})
+</insert>
+
+<select id="boarddetail" resultType="board" parameterType="String">
+select * from board where title=#{title}
+</select>
+
+<update id="updateviewcount" parameterType="String">
+update board
+set click=click+1
+where title=#{title}
+</update>
+
+</mapper>
+
+<!-- <![CDATA[select * from employees where employee_id >= #{a}]]> -->
+
+
+
+
+
+
